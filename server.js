@@ -16,13 +16,19 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-//cors middleware
-app.use(
-  cors({
-    origin: ["http://localhost:5000", "http://localhost:3000"],
-    credentials: true,
-  })
-);
+// cors middleware
+// NOTE: only use cors middleware in development as in production both client and
+// API are served from the same origin
+if (process.env.NODE_ENV !== "production") {
+  const cors = require("cors");
+  app.use(
+    cors({
+      origin: ["http://localhost:5000", "http://localhost:3000"],
+      credentials: true,
+    })
+  );
+}
+
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to the RandomIdea API" });
 });
